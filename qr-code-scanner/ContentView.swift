@@ -129,7 +129,9 @@ struct ContentView: View {
                     .ignoresSafeArea()
             }
             .alert(scannedCode ?? "Empty QR", isPresented: $showAlertQR) {
-                Button("OK", role: .cancel) { }
+                Button("OK", role: .cancel) {
+                    scannedCode = ""
+                }
             }
             .alert("Add to favorites", isPresented: $showAddToFavoriteAlert, actions: {
                 TextField("Title", text: $qrTitle)
