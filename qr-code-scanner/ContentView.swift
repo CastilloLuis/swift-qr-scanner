@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CodeScanner
+import AVFoundation
 
 struct ContentView: View {
     @State private var scannedCode: String?
@@ -18,8 +19,26 @@ struct ContentView: View {
     @State private var showAddToFavoriteAlert: Bool = false
     @State private var showAlertQR: Bool = false
     @State private var addedToFav: Bool = false
+    @State private var cameraAuthorized: Bool = false
     
     @AppStorage("favorites") var favorites: String = "[]"
+    
+    func checkPermissions() async {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        
+        // Determine if the user previously authorized camera access.
+        var isAuthorized = status == .authorized
+        
+        // If the system hasn't determined the user's authorization status,
+        // explicitly prompt them for approval.
+        if status == .notDetermined {
+            isAuthorized = await AVCaptureDevice.requestAccess(for: .video)
+        }
+        
+        print("isAuthorized", isAuthorized)
+        
+        cameraAuthorized = isAuthorized
+    }
     
     func openQR(_ output: String) {
         addedToFav = false
@@ -44,8 +63,8 @@ struct ContentView: View {
     }
     
     func includedInFavorites(_ link: String) -> Bool {
-        var currentFavorites = parseFavorites(from: favorites);
-        var filtered = currentFavorites.filter { item in
+        let currentFavorites = parseFavorites(from: favorites);
+        let filtered = currentFavorites.filter { item in
             item.link.lowercased() == link.lowercased()
         }
         return filtered.count > 0
@@ -55,10 +74,26 @@ struct ContentView: View {
         NavigationStack {
             TabView {
                 VStack(spacing: 10) {
-                    CodeScannerView(codeTypes: [.qr]) { response in
-                        if case let .success(result) = response {
-                            openQR(result.string)
+                    if (cameraAuthorized) {
+                        CodeScannerView(codeTypes: [.qr]) { response in
+                            if case let .success(result) = response {
+                                openQR(result.string)
+                            }
                         }
+                    } else {
+                        VStack {
+                            Text("Camera Permission was denied 😔").bold()
+                            Text("Settings > Privacy & Security > Camera and enable QR Code Scanner")
+                                .multilineTextAlignment(.center)
+                                .padding(10)
+                            Divider()
+                            Button {
+                                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                            } label: {
+                                Text("Go to Settings")
+                            }
+                        }
+                        .padding()
                     }
                 }
                 .tabItem {
@@ -102,6 +137,9 @@ struct ContentView: View {
                     addToFavorites(title: qrTitle, url: webViewUrl ?? DEFAULT_URL)
                 })
             })
+            .task {
+                await checkPermissions()
+            }
         }
     }
 }

@@ -61,7 +61,7 @@ struct FavoritesView: View {
                 }
                 .listStyle(PlainListStyle())
             } else {
-                Text("Empty List")
+                Text("You don't have any favorites")
                     .bold()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 Spacer()

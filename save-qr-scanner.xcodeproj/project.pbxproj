@@ -116,7 +116,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DE835A6629BF70F700EB4E58 /* Build configuration list for PBXProject "qr-code-scanner" */;
+			buildConfigurationList = DE835A6629BF70F700EB4E58 /* Build configuration list for PBXProject "save-qr-scanner" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -342,7 +342,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DE835A6629BF70F700EB4E58 /* Build configuration list for PBXProject "qr-code-scanner" */ = {
+		DE835A6629BF70F700EB4E58 /* Build configuration list for PBXProject "save-qr-scanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DE835A7729BF70F800EB4E58 /* Debug */,
